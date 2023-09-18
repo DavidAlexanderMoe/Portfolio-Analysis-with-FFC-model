@@ -1,0 +1,558 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{subfiles}
+\usepackage{setspace}
+\usepackage{lipsum}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{tocloft}
+\usepackage{subcaption}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdfpagemode=FullScreen,
+}
+
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+\graphicspath{{images/}{../images/}}
+
+\addtolength{\oddsidemargin}{-.5in}
+\addtolength{\evensidemargin}{-.5in}
+\addtolength{\textwidth}{1in}
+
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1in}
+
+\definecolor{myred}{RGB}{243, 220, 219}
+\definecolor{myblue}{RGB}{218, 238, 242}
+
+%-----------------------------------------------------------
+
+\begin{document}\errorcontextlines=9
+\onehalfspacing
+
+\begin{center}
+\MakeUppercase{Catholic University of the Sacred Heart\\
+Interfaculty of Mathematics, Physics and Natural Sciences\\
+Applied Data Science for Banking and Finance}\\
+\vspace{1cm}
+Teaching Assistant: Peter Cincinelli \\
+\vspace{24pt}
+\huge Portfolio Analysis with \\ Fama \& French \& Carhart Model\\
+\vspace{144pt}
+\LARGE Authors: \\ 
+\large Borgo Riccardo\\
+Santucci Edoardo\\
+Moe David Alexander \\
+Kolbasov Maksim\\
+Medvedieva Kateryna\\
+\end{center}
+
+\pagenumbering{gobble}
+\clearpage
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+\pagenumbering{arabic}
+
+\section{Introduction}
+
+The aim of this report is to analyze a set of ten portfolios composed by unknown UK stocks applying the Fama\&French\&Carhart model to them with the purpose of studying the 
+analogies and the differences.\\
+We have been provided with monthly data from October 1980 to December 2010 containing:
+\begin{enumerate}
+    \item The returns of the ten UK portfolios. Stocks have been assigned to portfolios based on their market capitalization, from the smallest to the largest;
+    \item The four risk factors of the Fama\&French\&Carhart model (SMB, HML, UMD and RMRF);
+    \item The risk-free return.
+\end{enumerate}
+
+\clearpage
+%------Descriptive Statistics------%
+
+\section{Descriptive Statistic}
+Firstly, we calculated the excess return for each portfolio as portfolio return minus the UK risk-free return.
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[scale = .4]{excess_returns_time.jpg}
+    \end{center}
+    \caption{Excess Returns of every portfolio from 1980 to 2010}
+    \label{fig:excess_port}
+\end{figure}
+The figure \textbf{\ref{fig:excess_port}} shows the excess returns for every portfolio.\\
+The problem is that it is very difficult to compare the excess returns on these graphs. We can see that they all follow almost the same trend.
+As a consequence we decided to calculate the portfolio's cumulative excess returns to understand how much pounds we will receive at the end of 2010 if we invest 1 pound in October 1980. The figure 2 illustrates the given result.
+The cumulative excess return was calculated as follows:
+\begin{equation}
+    (1 + R_1)(1 + R_2)\hdots(1 + R_n) - 1 
+    \label{eq:equation_excess}
+\end{equation}
+where R\textsubscript{1} - return of the first period - October1980,\\
+R\textsubscript{2} - return of the second period - November 1980,\\
+R\textsubscript{n} - return of the last period - December 2010.
+
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[scale = .4]{cumulative_excess_returns.jpg}
+    \end{center}
+    \caption{Cumulative excess returns of every portfolio from 1980 to 2010}
+    \label{fig:cum_excess_port}
+\end{figure}
+
+Now we can easily see the difference between the portfolios. We can say, for example, that our 1 pound invested in October 1980 in the portfolio S1 will give us at 
+the end of December 2010 29,38 pounds more than if we would invest in the UK risk free portfolio. Likewise, 1 pound invested in the portfolio S10 - only 3.24 pounds excess. 
+The final excess return (as December 2010) is depicted on the figure \textbf{\ref{fig:fin_excess_port}}.
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[scale = .50]{bar_excess_returns.jpg}
+    \end{center}
+    \caption{Final Excess Return for every portfolio}
+    \label{fig:fin_excess_port}
+\end{figure}
+
+Another aspect we can notice from figure \textbf{\ref{fig:cum_excess_port}} is the high volatility of portfolio S1 and a lower one for portfolio S10.\\
+Another thing we did is the transformation of our monthly data into years because we are more accustomed to annual interest than to monthly interest. 
+Then we want to see how the different portfolios behaved in the different years. We eliminated the data for 1980 (as there are only 3 months from October to December). 
+The excess return for every year was calculated as follows:
+\begin{equation}
+    (1 + R_1)(1 + R_2)\hdots(1 + R_{12}) - 1
+\end{equation}
+where R\textsubscript{1} is the excess return in January, and R\textsubscript{12} is the excess return in December.
+The results are in the table \textbf{\ref{tab:month_year_er}}.
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{ccccccccccc}
+    \toprule\toprule
+    & \textbf{XS1} & \textbf{XS2} & \textbf{XS3} & \textbf{XS4} & \textbf{XS5} & \textbf{XS6} & \textbf{XS7} & \textbf{XS8} & \textbf{XS9} & \textbf{XS10}\\ 
+    \midrule
+    1981 & 13\% & 11\% & 14\% & 6\% & 16\% & 9\% & 6\% & 12\% & 5\% & 1\% \\
+    1982 & 20\% & 10\% & 3\% & -1\% & 3\% & 19\% & 11\% & 13\% & 20\% & 16\% \\
+    1983 & 52\% & 35\% & 29\% & 40\% & 27\% & 9\% & 22\% & 22\% & 21\% & 21\% \\
+    1984 & 17\% & 16\% & 19\% & 21\% & 18\% & 17\% & 23\% & 24\% & 22\% & 19\% \\ 
+    1985 & 41\% & 21\% & 18\% & 16\% & 10\% & 13\% & 15\% & 11\% & 11\% & 5\% \\ 
+    1986 & 74\% & 52\% & 40\% & 28\% & 24\% & 27\% & 25\% & 21\% & 22\% & 13\% \\
+    1987 & 62\% & 41\% & 17\% & 19\% & 27\% & 13\% & 11\% & 8\% & 5\% & -2\% \\
+    1988 & 17\% & 8\% & 4\% & 3\% & 9\% & 6\% & 5\% & 6\% & 2\% & 2\% \\
+    1989 & -5\% & -7\% & -5\% & -6\% & -10\% & -6\% & -6\% & 2\% & 7\% & 22\% \\
+    \rowcolor{myred} 1990 & -36\% & -39\% & -40\% & -41\% & -39\% & -37\% & -36\% & -31\% & -27\% & -19\% \\
+    1991 & 4\% & 0\% & 1\% & 0\% & 9\% & 8\% & 16\% & 10\% & 3\% & 11\% \\
+    1992 & 0\% & -15\% & -7\% & -2\% & -2\% & -3\% & -1\% & 4\% & 18\% & 9\% \\
+    1993 & 93\% & 55\% & 55\% & 61\% & 46\% & 46\% & 35\% & 22\% & 29\% & 15\% \\
+    1994 & 4\% & 10\% & 6\% & -6\% & 2\% & -8\% & -6\% & -9\% & -9\% & -9\% \\
+    1995 & -3\% & 13\% & 9\% & 4\% & 17\% & 17\% & 12\% & 9\% & 15\% & 13\% \\
+    1996 & 15\% & 24\% & 9\% & 7\% & 12\% & 16\% & 13 & 13\% & 12\% & 7\% \\
+    1997 & 14\% & 3\% & 5\% & -1\% & 6\% & 3\% & 6\% & 4\% & 0\% & 16\% \\
+    1998 & -7\% & -5\% & -12\% & -11\% & -17\% & -10\% & -9\% & -17\% & -12\% & 12\% \\
+    \rowcolor{myblue} 1999 & 51\% & 86\% & 51\% & 93\% & 64\% & 59\% & 47\% & 46\% & 37\% & 12\% \\
+    2000 & -8\% & -3\% & -1\% & 13\% & -7\% & 5\% & 0\% & -10\% & 4\% & -11\% \\
+    2001 & 18\% & 18\% & 5\% & 7\% & 11\% & 3\% & -4\% & -11\% & -4\% & -22\% \\
+    \rowcolor{myred} 2002 & -1\% & -12\% & -13\% & -15\% & -21\% & -24\% & -28\% & -23\% & -33\% & -27\% \\
+    \rowcolor{myblue} 2003 & 64\% & 77\% & 62\% & 60\% & 68\% & 41\% & 31\% & 34\% & 37\% & 16\% \\
+    2004 & 3\% & 20\% & 27\% & 16\% & 13\% & 14\% & 18\% & 18\% & 22\% & 6\% \\
+    2005 & -1 & 8\% & 12\% & 19\% & 16\% & 24\% & 22\% & 25\% & 22\% & 18\% \\
+    2006 & -2\% & 20\% & 19\% & 16\% & 22\% & 23\% & 25\% & 25\% & 23\% & 12\% \\
+    2007 & -18\% & -21\% & -23\% & -14\% & -23\% & -20\% & -13\% & -7\% & -10\% & 12\% \\
+    \rowcolor{myred} 2008 & -45\% & -52\% & -46\% & -51\% & -49\% & -42\% & -45\% & -45\% & -46\% & -25\% \\
+    \rowcolor{myblue} 2009 & 28\% & 74\% & 92\% & 46\% & 49\% & 69\% & 48\% & 56\% & 51\% & 28\% \\
+    2010 & 20\% & 31\% & 34\% & 28\% & 19\% & 26\% & 22\% & 32\% & 30\% & 14\% \\
+    \midrule
+    \midrule
+    Mean & 16,1\% & 15,9\% & 12,8\% & 11,9\% & 10,7\% & 10,6\% & 9,0\% & 8,8\% & 8,8\% & 6,1\% \\
+    SD & 31,2\% & 31,6\% & 28,6\% & 29,0\% & 26,2\% & 24,6\% & 21,6\% & 21,8\% & 21,3\% & 14,5\% \\
+    IQR & 28,0\% & 31,3\% & 25,0\% & 23,0\% & 22,1\% & 23,5\% & 26,1\% & 26,7\% & 24,5\% & 14,1\% \\
+    \bottomrule
+    \bottomrule
+    \end{tabular}
+    \caption{Excess Return on every portfolio by year} 
+    \label{tab:month_year_er}
+\end{table}
+
+The top 3 years (with the biggest excess returns), 1999, 2003 and 2009, are colored in blue, and the worst 3 years, 1990, 2002 and 2008, are colored in red. 
+In 1990 there was a recession which began in July 1990 and ended in March 1991. This recession was sparked by Iraq's invasion of Kuwait in the summer of 1990. 
+In 2002 burst the dot-com bubble formed as a result of a surge of investments in the internet and technology stocks. Massive amounts of venture capital were dumped 
+into tech and internet startups, while investors purchased shares in these companies on the hope of success. The crash wiped out \$5 trillion U.S. in technology-firm 
+market value between March and October of 2002. Finally the financial crisis of 2007-2008 (figures 4 and 5). It was an epic financial and economic collapse that cost 
+many ordinary people their jobs, their life savings, their homes, or all three.\\
+At the bottom of the table we can see the descriptive statistics for the 10 portfolios. The largest average excess return over the years is the portfolio 
+S1 - average excess return is 16.1\% while portfolio S10 is only 6.1\% on average. But we also need to consider the risk. The most profitable portfolio, 
+S1, has the second largest volatility (-31.2\%) which means that with 68\% probability of expected excess return can roughly vary between (-15.1\%) and 47.3\%. 
+The 95\% confidence interval of the expected excess return is [-46.3\%,78.5\%]. The portfolio S10 has the lowest risk (14.5\%), more than two times smaller compared to S1.\\
+To compare the excess return over the years we present the portfolio with the smallest capitalization and the biggest cap - figures \textbf{\ref{fig:ex_ret_by_years1}} and 
+\textbf{\ref{fig:ex_ret_by_years10}} - portfolio S1 and S10 respectively.
+
+\begin{figure}[H]
+    \centering
+        \centering
+        \includegraphics[width=\textwidth]{ex_ret_by_years1.jpg}
+        \caption{Comparison of excess returns by year for Portfolio 1}
+        \label{fig:ex_ret_by_years1}
+\end{figure}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{ex_ret_by_years10.jpg}
+        \caption{Comparison of excess returns by year for Portfolio 10}
+        \label{fig:ex_ret_by_years10}
+\end{figure}
+\clearpage
+
+%------Regressions------%
+
+\section{Regression Analysis}
+To Investigate the sensitivity of each portfolio’s excess return to all risk factors we built a regression model for every one. Each model includes a constant 
+term and four factors:
+\begin{enumerate}
+    \item UK market risk premium (RMRF);
+    \item Returns on a size factor portfolio (SMB);
+    \item Returns on a value portfolio (HML);
+    \item Returns on a momentum factor portfolio (UMD).
+\end{enumerate}
+
+The Four-Factor model can be represented as a linear equation as shown below:
+\begin{equation}
+    R_i = R_f + \beta_1RMRF + \beta_2HML + \beta_3SMB + \beta_4UMD + \epsilon_i
+    \label{eq: ffc_eq} 
+\end{equation}
+
+The summary of the models of each portfolio is shown on the following table \textbf{\ref{tab:summary_reg1_5}} and \textbf{\ref{tab:summary_reg6_10}}.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cccccc}
+    \toprule\toprule
+    & \textbf{XS1} & \textbf{XS2} & \textbf{XS3} & \textbf{XS4} & \textbf{XS5} \\
+    \midrule
+    $R^2$ &  0.6023 & 0.7195 &  0.7785 & 0.8298 & 0.8496 \\
+    $Adj. R^2$ & 0.5979 & 0.7163 & 0.776 & 0.8279 & 0.8479 \\
+    \midrule
+    \textbf{RMRF} \\
+    Beta & 0.669732 & 0.746535 & 0.745864 & 0.808085 & 0.864139 \\
+    Std. Err. &  0.001898 &  0.001627 & 0.028985 & 0.026218 & 0.024385 \\
+    t-value & 17.118 & 22.259 & 25.733  & 30.822 & 35.438 \\
+    p-value & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $2.2e^{-16}$ & $< 2.2e^{-16}$ \\
+    \midrule
+    \textbf{SMB} \\
+    Beta & 0.833417 & 0.895935 & 0.928535 & 1.004553 & 0.904032 \\
+    Std. Err. & 0.053539 & 0.045896 & 0.039664 & 0.035877 & 0.033369 \\
+    t-value & 15.567 & 19.521 & 23.410 & 28.000 & 27.092 \\
+    p-value & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $2.2e^{-16}$ & $< 2.2e^{-16}$ \\
+    \midrule
+    \textbf{HML}  \\
+    Beta & 0.104161 & 0.055465 & 0.073296 & 0.106107 & 0.040708 \\
+    Std. Err. & 0.055652 & 0.047707 & 0.041229 & 0.037293 & 0.034686 \\
+    t-value & 1.872 & 1.163 & 1.778 & -2.845 & 1.174 \\
+    p-value & 0.06207 & 0.245760 & 0.0763 & 0.00469 & 0.2413 \\
+    \midrule
+    \textbf{UMD} \\
+    Beta & 0.095220 & 0.029742 & 0.002401 & 0.086681 & 0.053836 \\
+    Std. Err. & 0.050715 & 0.043475 & 0.037572 & 0.033985 & 0.031609 \\
+    t-value & 1.878 &  -0.684 & 0.064 & 2.551 & 1.703 \\
+    p-value & 0.06126 & 0.494354 & 0.9491 & 0.01117 & 0.0894 \\
+    \midrule
+    \textbf{Constant Value}  \\
+    Beta & 0.005379 & 0.005661  &  0.003544 &  0.002398 & 0.001190 \\
+    Std. Err. & 0.001898 & 0.001627 &  0.001406  & 0.001272 & 0.001183 \\
+    t-value & 2.835 &3.480 & 2.521 & 1.886 & 1.007 \\
+    p-value & 0.00485 & 0.000563 & 0.0121 & 0.06015 & 0.3148 \\
+    \midrule
+    \textbf{Test F}  \\
+    F Value (4,358) & 135.5 & 229.5 & 314.5 & 436.3 & 505.6 \\
+    p-value & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $2e^{-16}$ & $< 2.2e^{-16}$ \\
+    \bottomrule
+    \bottomrule
+    \end{tabular}
+    \caption{Summary statistics of regressions for portfolio 1 to 5} 
+    \label{tab:summary_reg1_5}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ccccccccccc}
+    \toprule\toprule
+    & \textbf{XS6} & \textbf{XS7} & \textbf{XS8} & \textbf{XS9} & \textbf{XS10}\\ 
+    \midrule
+    $R^2$  & 0.8876 & 0.9073 & 0.9259 & 0.9218 & 0.9629 \\
+    $Adj. R^2$ & 0.8863 & 0.9063 & 0.925 & 0.9209 & 0.9625 \\
+    \midrule
+    \textbf{RMRF} \\
+    Beta & 0.893728 & 0.924632 & 0.995537 & 1.076245 & 0.955129 \\
+    Std. Err. & 0.020992 & 0.0190066 & 0.0169918 & 0.0177175 & $1.004e^{-02}$ \\
+    t-value & 42.574 & 48.648 & 58.589 & 60.745 &95.086 \\
+    p-value & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ \\
+    \midrule
+    \textbf{SMB} \\
+    Beta & 0.882555 & 0.844916 & 0.724549 & 0.451132 & -0.150017 \\
+    Std. Err. & 0.028727 & 0.0260092 &0.0232521 & 0.0242451 & $1.375e^{-02}$ \\
+    t-value & 30.722 & 32.485 & 31.161 & 18.607 & 10.914 \\
+    p-value & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ \\
+    \midrule
+    \textbf{HML} \\
+    Beta & 0.020540 & 0.016041 & 0.034221 & 0.009106 & -0.008059 \\
+    Std. Err. & 0.029860 & 0.0270357 &  0.0241697 & 0.0252019 & $1.429e^{-02}$ \\
+    t-value & 0.688 & -0.593 & -1.416 & -0.361 & -0.564 \\
+    p-value & 0.4920 & 0.553 & 0.1577 & 0.7181 & 0.573079  \\
+    \midrule
+    \textbf{UMD} \\
+    Beta & 0.014411 & 0.008724 & 0.045609 & -0.057293 & 0.046646 \\
+    Std. Err. & 0.027212 & 0.0246375 & 0.0220257 & 0.0229664 & $1.302e^{-02}$ \\
+    t-value & 0.530 & 0.354 & 2.071 & -2.495 & 3.582 \\
+    p-value & 0.5967 & 0.723 & 0.0391 & 0.0131 & 0.000388 \\
+    \midrule
+    \textbf{Constant Value} \\
+    Beta & 0.001816 &  0.0010182 & 0.0004723 &  0.0011685 & $-1.803e^{-05}$ \\
+    Std. Err. &  0.001018 & 0.0009218 & 0.0008241  & 0.0008593 &  $4.872e^{-04}$ \\
+    t-value & 1.784 & 1.105 & 0.573 & 1.360 & -0.037 \\
+    p-value &  0.0753 & 0.270 & 0.5669 & 0.1747 & 0.970493 \\
+    \midrule
+    \textbf{Test F}  \\
+    F Value (4,358) & 706.8 & 876.4 & 1118 & 1055 & 2322 \\
+    p-value & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ & $< 2.2e^{-16}$ \\
+    \bottomrule
+    \bottomrule
+    \end{tabular}
+    \caption{Summary statistics of regressions for portfolio 6 to 10} 
+    \label{tab:summary_reg6_10}
+\end{table}
+\clearpage
+
+Let us visualize our betas to get a better understanding of the influence of each factor (figure \textbf{\ref{fig:conf_int}}). Firstly we can say that the most significant 
+factors are SMB and RMRF: they impact each portfolio’s returns.\newline
+When the coefficient’s confidence interval is crossing the red line on x=0, it means that the risk factor doesn’t have an impact (or slightly impact) on the asset return. 
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[scale = .6]{conf_int.jpg}
+    \end{center}
+    \caption{Confidence Interval respect to the beta for every portfolio}
+    \label{fig:conf_int}
+\end{figure}
+
+By giving a deeper look into the models (table \textbf{\ref{tab:summary_reg1_5}} and \textbf{\ref{tab:summary_reg6_10}}), all the models have a positive market risk premium beta, 
+as we expected by looking at the correlation matrix between the 
+risk factors and the excess returns of each portfolio. The market risk premium beta indicates the response of a security to changes in the market risk premium. For example, 
+by assuming that SMB, HML and UMD are constant, if the excess return on the market (market risk premium) rises by 1\%, the excess return of portfolio 1 will rise by 0.67. 
+If the beta is negative, the excess returns of a portfolio would decrease by beta \%. The only model with a market risk premium beta greater than 1 is the one of portfolio 9: 
+the portfolio has greater sensitivity to the economy than an average portfolio. The other portfolios have a security beta lower than 1 so we are dealing with "defensive" or 
+below average sensitivity portfolios.
+In terms of t-statistic, a high value leads to high statistical significance which is generally really good for a model: it indicates that the risk factor associated with 
+that beta is an essential factor that explains a big portion of the model’s variance. Analyzing the security beta is fundamental to understand the models we are dealing with.
+By looking at the SMB betas, the first thing we notice is that every portfolio, except for the one with the largest capitalization securities, presents positive and really 
+high estimates: since the standard errors are pretty much the same and also really low, this will surely lead also to high statistical significance. This is statistically
+verified (table \textbf{\ref{tab:summary_reg1_5}} and table \textbf{\ref{tab:summary_reg6_10}}). From a financial point 
+of view, this result means that the returns in the investment portfolios are weighted toward small cap stocks.\newline
+The betas of the other two risk factors, HML and UMD, are different between the various models, but for example in portfolio 1 they are both positive and significant at a 
+10\% confidence level. This portfolio has a positive relationship with the value premium and this means that it behaves more or less like a value stock (high book to market 
+ratio, low price and low volatility): it’s a concept that is also correlated with the momentum UMD, which explains the speed of price changes in a stock. 
+If I only buy value stocks then I expect to get (like in this case) a positive regression relationship to the HML risk factor, and obviously a positive beta associated to it. 
+Portfolio 1 has the smallest cap stocks and according to the FFC model, over the long run, small companies outperform large companies so, obviously, value companies beat 
+growth companies, as we can see from figure \textbf{\ref{fig:cum_excess_port}}. Value companies tend to overall perform better (also because of the low volatility) and 
+the momentum UMD factor confirms this because, assuming that the market is efficient, if a stock/company performed well in the past, it will perform well also in the future 
+(and again this can be clearly seen in the cumulative excess return plot).
+Talking about the intercept, the base investment alpha is always positive (apart from the last model), which is ‘attractive’ because if I am comparing two portfolios with 
+similar betas, I will choose the one with the highest alpha. Again, by taking in consideration the first model, alpha is 0.005379 and presents also a really low volatility which 
+is always good. From a statistical point of view, alpha represents the expected excess return value when all the risk factors are null. It represents the expected return on 
+the stock beyond any return induced by movements in the market index.\newline
+On the other side, the betas can be interpreted as follows: assuming that all the other variables are constant, when the associated variable increases by 1\%, 
+the expected excess return of the portfolio rises (or falls if the beta is negative) by beta \%. And if they are statistically significant it means that the independent 
+variable associated to the beta is linearly linked with the dependent variable, in this case the expected excess return of a portfolio.
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[scale = .60]{borda_dentro.png}
+    \end{center}
+    \caption{Added-Variable plots for Portfolio 1}
+    \label{fig:add_v_p1}
+\end{figure}
+We can visualize the single sensitivities in the added-variable plots (figure \textbf{\ref{fig:add_v_p1}}). They represent the simple regressions between the excess returns of portfolio 1
+and one of the four risk factors in turn, assuming 
+that the other three are constant. From these plots we can notice that they visually reflect and confirm the values (slopes) of the betas presented in the summary of the model: 
+RMRF and SMB are highly linearly linked with the excess returns. On the other hand, HML and UMD have a smaller slope.
+Last but not least, it looks like we are dealing with a valid model: the portfolio 1 model presents an F-value of 135.5 with a highly statistically significant p-value.\newline 
+Since we are working with only four independent variables, $R^2$ and $R^2$ adjusted are pretty much the same and in this case $R^2$ is equal to 0.6023: 
+it means that about 60\% of the variability in excess returns is explained by the risk factors considered in the model. An $R^2$ of 60\% is decent but not good/optimal: 
+there surely are other risk factors that influence the returns of portfolio 1 which have not been included in the model. Same considerations can be done to the other models. 
+The model with the highest $R^2$ score is the one associated with the portfolio 10 (96.3\%). This corresponds with the very small standard errors (table \textbf{\ref{tab:summary_reg6_10}}).
+An $R^2$ of 1 means that all movements of a security are completely explained by movements of the factors of our model. 
+Also we found that portfolio S10 is nearly perfectly correlated (the correlation coefficient is 0.9551) with the market returns. We can see this on the figure \textbf{\ref{fig:add_v_p10}}.
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[scale = .60]{Rplot01.png}
+    \end{center}
+    \caption{Added-Variable plots for Portfolio 10}
+    \label{fig:add_v_p10}
+\end{figure}
+\clearpage
+By analyzing the portfolio 10 model, like in every portfolio, the RMRF and SMB factors are always highly significant. We notice that the larger is the capitalization 
+of the stocks in the portfolios, the higher is the $R^2$ of the models. As said before, a high $R^2$ value indicates that the stock’s performance moves relatively in 
+line with the index. This is very useful information to investors thus a higher $R^2$ value is necessary for a successful project. 
+Another one interesting thing about the last model is that the size risk factor is negatively correlated with the excess returns. This means that the portfolio 
+10 is weighted toward large cap stocks and it confirms the initial description of the data where we stated that the portfolios were ordered by capitalization.
+The most curious and overall good results are those from the portfolio 4 model (figure \textbf{\ref{fig:add_v_p4}}). 
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[scale = .60]{Rplot02.png}
+    \end{center}
+    \caption{Added-Variable plots for Portfolio 4}
+    \label{fig:add_v_p4}
+\end{figure}
+It is the only portfolio where all the risk factors are highly significant (table \textbf{\ref{tab:summary_reg1_5}}). 
+The model is valid (good F-statistic and p-value) and also fits pretty well the data (high $R^2$ - 83\%). The SMB beta is positive and also greater than 1. 
+The other medium cap portfolios behave pretty much all in the same way, apart from portfolio 4. This is the only small cap stocks model that presents a highly significant value 
+for the momentum factor.
+\clearpage
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{ccccccccc}
+    \toprule
+    \toprule
+        & XS1 & XS2 & XS3 & XS4 & XS5 & XS6 & XS7 & XS8 \\
+        XS1 & 1 & 0.8494 & 0.8219 & 0.8045 & 0.8107 & 0.7915 & 0.7745 & 0.7190 \\
+        XS2 & 0.8494 & 1 & 0.8985 & 0.8608 & 0.8905 & 0.8748 & 0.8446 & 0.8095 \\
+        XS3 & 0.8219 & 0.8985 & 1 & 0.8881 & 0.9097 & 0.8957 & 0.8807 & 0.8376 \\
+        XS4 & 0.8045 & 0.8608 & 0.8881 & 1 & 0.9120 & 0.9039 & 0.8941 & 0.8554 \\
+        XS5 & 0.8107 & 0.8905 & 0.9097 & 0.9120 & 1 & 0.9335 & 0.9233 & 0.8915 \\
+        XS6 & 0.7915 & 0.8748 & 0.8957 & 0.9039 & 0.9335 & 1 & 0.9491 & 0.9256 \\
+        XS7 & 0.7745 & 0.8446 & 0.8807 & 0.8941 & 0.9233 & 0.9491 & 1 & 0.9535 \\
+        XS8 & 0.7190 & 0.8095 & 0.8376 & 0.8554 & 0.8915 & 0.9256 & 0.9535 & 1 \\
+        XS9 & 0.6623 & 0.7520 & 0.7682 & 0.7920 & 0.8383 & 0.8729 & 0.9014 & 0.9434 \\
+        XS10 & 0.5106 & 0.5657 & 0.5750 & 0.6067 & 0.6640 & 0.6953 & 0.7285 & 0.7921 \\
+        SMB & 0.5230 & 0.5597 & 0.5946 & 0.6069 & 0.5614 & 0.5530 & 0.5301 & 0.4517 \\
+        HML & 0.0875 & 0.1039 & 0.1102 & -0.0428 & 0.0661 & 0.0672 & 0.0435 & 0.0135 \\
+        UMD & -0.1075 & -0.1972 & -0.1900 & -0.0702 & -0.1455 & -0.1715 & -0.1651 & -0.1312 \\
+        RF & -0.0345 & -0.1288 & -0.1460 & -0.1225 & -0.1120 & -0.1187 & -0.0855 & -0.0829 \\
+        RM & 0.5699 & 0.6308 & 0.6446 & 0.6654 & 0.7268 & 0.7587 & 0.7892 & 0.8456 \\
+        RMRF & 0.5724 & 0.6391 & 0.6539 & 0.6733 & 0.7341 & 0.7664 & 0.7949 & 0.8512 \\
+        \bottomrule
+        \bottomrule
+    \end{tabular}
+    \caption{Correlation matrix between first eight portfolios excess returns and the FFC factors}
+    \label{tab:corr_matrix_tot8}
+\end{table}
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{ccccccccc}
+    \toprule
+    \toprule
+        & XS9 & XS10 & SMB & HML & UMD & RF & RM & RMRF \\ 
+        XS1 & 0.6623 & 0.5106 & 0.5230 & 0.0875 & -0.1075 & -0.0345 & 0.5699 & 0.5724 \\ 
+        XS2 & 0.7520 & 0.5657 & 0.5597 & 0.1039 & -0.1972 & -0.1288 & 0.6308 & 0.6391 \\ 
+        XS3 & 0.7682 & 0.5750 & 0.5946 & 0.1102 & -0.1900 & -0.1460 & 0.6446 & 0.6539 \\ 
+        XS4 & 0.7920 & 0.6067 & 0.6069 & -0.0428 & -0.0702 & -0.1225 & 0.6654 & 0.6733 \\ 
+        XS5 & 0.8383 & 0.6640 & 0.5614 & 0.0661 & -0.1455 & -0.1120 & 0.7268 & 0.7341 \\ 
+        XS6 & 0.8729 & 0.6953 & 0.5530 & 0.0672 & -0.1715 & -0.1187 & 0.7587 & 0.7664 \\ 
+        XS7 & 0.9014 & 0.7285 & 0.5301 & 0.0435 & -0.1651 & -0.0855 & 0.7892 & 0.7949 \\ 
+        XS8 & 0.9434 & 0.7921 & 0.4517 & 0.0135 & -0.1312 & -0.0829 & 0.8456 & 0.8512 \\ 
+        XS9 & 1 & 0.8680 & 0.2876 & 0.0588 & -0.2061 & -0.0695 & 0.9123 & 0.9171 \\ 
+        XS10 & 0.8680 & 1 & -0.1105 & -0.0095 & -0.0860 & -0.0181 & 0.9714 & 0.9732 \\ 
+        SMB & 0.2876 & -0.1105 & 1 & 0.0698 & -0.1144 & -0.0995 & 0.0009 & 0.0069 \\ 
+        HML & 0.0588 & -0.0095 & 0.0698 & 1 & -0.4962 & -0.0247 & 0.0251 & 0.0266 \\ 
+        UMD & -0.2061 & -0.0860 & -0.1144 & -0.4962 & 1 & 0.0190 & -0.1465 & -0.1477 \\ 
+        RF & -0.0695 & -0.0181 & -0.0995 & -0.0247 & 0.0190 & 1 & 0.0420 & -0.0185 \\ 
+        RM & 0.9123 & 0.9714 & 0.0009 & 0.0251 & -0.1465 & 0.0420 & 1 & 0.9982 \\ 
+        RMRF & 0.9171 & 0.9732 & 0.0069 & 0.0266 & -0.1477 & -0.0185 & 0.9982 & 1 \\ 
+        \bottomrule
+        \bottomrule
+    \end{tabular}
+    \caption{Correlation matrix between the last portfolios excess returns and the FFC factors}
+    \label{tab:corr_matrix_tot_fin}
+\end{table}
+By looking at the correlation matrix (tables \textbf{\ref{tab:corr_matrix_tot8}} and \textbf{\ref{tab:corr_matrix_tot_fin}}), small cap portfolios are highly correlated 
+between them but not with the larger cap ones. 
+On the other hand, large cap portfolios 
+are all highly correlated between them apart from portfolio 10 which presents smaller values in terms of correlation.\newline
+The portfolios 8, 9, 10 present a more and more statistically significant value for the UMD risk factor (table \textbf{\ref{tab:summary_reg6_10}}). It is due to the fact 
+that we are dealing with large cap stocks 
+and this means higher risk and higher volatility: so the fact that the momentum factor is highly statistically significant makes sense because it explains the velocity of 
+price changes, and large cap stock prices change a lot really quickly. For these portfolios, assuming that the other variables remain constant, a 1\% increase of the monthly 
+premium (momentum) corresponds in a 0.0456089 increase in the excess return of portfolio 8, 0.0572933 reduction in the excess return of portfolio 9 and 0.04665 reduction in
+the excess return of portfolio 10. 
+\clearpage
+\section{Cross-Sectional Analysis}
+Do risk exposures explain the way in which mean returns vary across portfolios? In this section we ran a series of cross section regressions. The dependent variable is the 
+set of 10 mean returns on the ten size-based portfolios and the independent variables are a constant and two sets of risk exposures from your time series regressions; 
+those on RMRF and one other. In turn, the other risk factors will be SMB, HML and UMD. Thus, in each regression there are 10 observations and two explanatory variables 
+plus a constant term.
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{cccccc}
+        \toprule
+        \toprule
+        & Mean Returns & RMRF & SMB & HML & UMD \\
+        Mean Returns & 1 & -0.844973652 & 0.615730294 & 0.595864848 & 0.076656928 \\
+        RMRF & -0.844973652 & 1 & -0.527550324 & -0.546313995 & -0.389152651 \\
+        SMB & 0.615730294 & -0.527550324 & 1 & 0.124614876 & 0.098971288 \\
+        HML & 0.595864848 & -0.546313995 & 0.124614876 & 1 & -0.125909237 \\
+        UMD & 0.076656928 & -0.389152651 & 0.098971288 & -0.125909237 & 1 \\
+        \bottomrule
+        \bottomrule
+    \end{tabular}
+    \caption{Correlation matrix between FFC factors and 10 portfolios mean returns}
+    \label{tab:corr_matrix_cross}
+\end{table}
+Before computing the regressions (table \textbf{\ref{tab:summary_cross_section}}) we took a look at the correlation matrix (table \textbf{\ref{tab:corr_matrix_cross}}): the market risk premium is negatively correlated with all the other risk factors and also 
+with the mean returns portfolio. We expect that all the betas associated with RMRF will be negative in every model. 
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cccc}
+    \toprule\toprule
+    & & \textbf{Mean Returns} & \\ 
+    \midrule
+    $R^2$  & 0.754 & 0.7397 & 0.7889 \\
+    $Adj. R^2$ & 0.6837 & 0.6653 & 0.7286 \\
+    \midrule
+    \textbf{RMRF} \\
+    Beta & -0.010260 & -0.010541 & -0.013675 \\
+    Std. Err. & 0.003141 & 0.003278 & 0.002684 \\
+    t-value & -3.266 & -3.216 & -5.096 \\
+    p-value & 0.01375 & 0.014738 & 0.00141 \\
+    \midrule
+    \textbf{SMB} \\
+    Beta & 0.001227 &  &  \\
+    Std. Err. & 0.001150 &  & \\
+    t-value & 1.067 &  &  \\
+    p-value & 0.32127 &  &  \\
+    \midrule
+    \textbf{HML} \\
+    Beta &  & 0.005705 &  \\
+    Std. Err. &  & 0.006865 &   \\
+    t-value &  & 0.831 &  \\
+    p-value &  & 0.433347 &  \\
+    \midrule
+    \textbf{UMD} \\
+    Beta &  &  & -0.010976 \\
+    Std. Err. &  &  & 0.006963 \\
+    t-value &  &  & -1.576 \\
+    p-value &  &  & 0.15894 \\
+    \midrule
+    \textbf{Constant Value} \\
+    Beta & 0.015799 &  0.016872 & 0.019949 \\
+    Std. Err. &  0.003266 & 0.002910 & 0.02424 \\
+    t-value & 4.837 & 5.799 & 8.229 \\
+    p-value &  0.00188 & 0.000665 & 7.61$e-05$ \\
+    \bottomrule
+    \bottomrule
+    \end{tabular}
+    \caption{Summary statistics of regressions for the cross-sectional analysis} 
+    \label{tab:summary_cross_section}
+\end{table}
+Mean returns are also positively correlated with 
+the SMB and HML factors but UMD seems statistically insignificant. In every model, the RMRF betas are highly significant and the other risk factor always non-significant: 
+in fact we can notice t-values near to zero for them. In terms of $R^2$, every model presents a value higher than 70\% which is pretty good: by RMRF being the only 
+significant factor it means that 70\% of the model variance is explained by the market risk premium.
+
+\end{document}
